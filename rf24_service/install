@@ -1,0 +1,17 @@
+#!/bin/bash
+service_script=rf24
+app=rf24_proxy.py
+if [[ $EUID -ne 0 ]]; then
+  echo you are not root. Use sudo.
+  exit 2
+fi
+
+cp $service_script /etc/init.d/
+chmod +x /etc/init.d/${service_script}
+
+tgtdir=https://github.com/cz6ace/arduino_rpi_openhab.git
+mkdir -p $tgtdir
+cp $app $tgt/
+touch /etc/rf24_proxy.conf
+
+echo done.

@@ -23,8 +23,8 @@ fi
 # Please remove the "Author" lines above and replace them
 # with your own name if you copy and modify this script.
 
-DESC="Description of the service"
-DAEMON=/home/pi/arduino_rpi_openhab/rf24_service/rf24_proxy.py
+DESC="Proxy between Arduino and MQTT using RF24"
+DAEMON=/usr/local/rf24_proxy/rf24_proxy.py
 DAEMON_NAME=rf24
 
 # Add any command line options for your daemon here
