@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Post install script for Raspbian + OpenHAB + Arduino
+# Post install script for Raspbian preparing OpenHAB + Arduino integration
 #
 verbose=0
 
@@ -32,6 +32,7 @@ inst_opt_packages() {
   paks="
 byobu
 mc
+wget
 screen
 xrdp
 bash-completion

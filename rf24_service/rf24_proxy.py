@@ -87,6 +87,7 @@ class MQ(threading.Thread):
 		self.client.connect("localhost", 1883, 60)
 
 	def run(self):
+		""" runs loop reading from queue the topic and payload, publishing it to the MQTT """
 		self.client.loop_start()
 		while True:
 			#sleep(10)
@@ -96,9 +97,11 @@ class MQ(threading.Thread):
 			logging.debug("Read from RF24 queue " + topic + " " + payload)
 
 	def put(self, topic, payload):
+		""" Puts topic and payload into the queue for later publishing """
 		self.queue.put((topic, payload))
 
 	def on_connect(self, client, userdata, flags, rc):
+		""" Event callback when client is connected to the MQTT """
 		logging.info("Connected to MQTT with result code "+str(rc))
 		# Subscribing in on_connect() means that if we lose the connection and
 		# reconnect then subscriptions will be renewed.
@@ -106,15 +109,20 @@ class MQ(threading.Thread):
 		self.client.subscribe("command/#")
 
 	def on_message(self, client, userdata, msg):
+		""" Callback when message arrives into the subscribed topic """
 		#logging.debug(msg.topic+" "+str(msg.payload))
 		if self.on_message_callback != None:
 			self.on_message_callback(msg)
 
 	def set_on_message(self, callback):
+		""" Setter of the user callback function when the subscription receives message """
 		self.on_message_callback = callback
 
 
 def on_mq_message(msg):
+	"""Implementation when subscription receives message. 
+	The payload is parsed and put into the queue for delivering to the arduino 
+	"""
 	print (msg.topic + " " + str(msg.payload))
 	fields = msg.topic.split("/")
 	if len(fields) < 2:
@@ -129,6 +137,7 @@ def on_mq_message(msg):
 
 
 def get_topic(command, client_id):
+	""" Returns text topic from the mapping table from binary message """
 	global config
 	topic = config.get(str(client_id) + "." + str(command))
 	if topic != None:
@@ -136,6 +145,7 @@ def get_topic(command, client_id):
 	return "raw/" + str(client_id) + "/" + str(command)
 
 def parseCommand(buff):
+	""" Parses binary command from arduino and converts the primitive variable into the python variable """
 	if buff[INDEX_MODE] == MODE_BINARY:
 		logging.debug("parsing binary data");
 		command = buff[INDEX_COMMAND]
@@ -178,13 +188,13 @@ while True:
 		# when no data available, process commands queue
 		if not cmdQ.empty():
 			addr, bindata, value = cmdQ.get()
-			radio.stopListening();
 			payload = ''.join(chr(i) for i in bindata)
 			payload = payload + value
 			logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + value + ", payload=" + payload)
 			# open writing pipe for proper node address
 			outPipe = pipes[0]
 			outPipe[4] = addr
+			radio.stopListening();
 			radio.openWritingPipe(outPipe)
 			ok = radio.write(payload)
 			radio.startListening()
@@ -197,13 +207,8 @@ while True:
 	radio.read(recv_buffer)
 	out = ''.join(chr(i) for i in recv_buffer)
 	topic, value = parseCommand(recv_buffer)
+	# put the topic fo the queue to be published to the MQTT
 	mq.put(topic, value)
 	logging.debug("Received frame: " + str(cntr) + " " + topic + ":" + value)
-#	sleep(0.02)
-#	radio.stopListening();
-#	ok = radio.write("received frame: " + str(cntr))
-#	radio.startListening()
-#	if not ok:
-#		logging.error("write failed, no ack. frame: " + str(cntr))
 	cntr += 1
 # EOF
