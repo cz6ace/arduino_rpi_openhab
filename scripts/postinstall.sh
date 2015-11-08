@@ -106,18 +106,24 @@ sonic-pi
 }
 
 inst_openhab() {
-  sudo mkdir -p /opt/openhab
+  openhab=/opt/openhab
+  sudo mkdir -p $openhab
+  pushd $openhab
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-runtime.zip
   sudo unzip distribution-1.7.1-runtime.zip
-  sudo rm -y distribution-1.7.1-runtime.zip
+  sudo rm -f distribution-1.7.1-runtime.zip
   cd addons/
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-addons.zip
   sudo unzip distribution-1.7.1-addons.zip
-  sudo rm distribution-1.7.1-addons.zip
+  sudo rm -f distribution-1.7.1-addons.zip
+  sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-demo.zip
+  #sudo unzip distribution-1.7.1-demo.zip
+  #sudo rm -f distribution-1.7.1-demo.zip
   cd ..
   sudo cp configurations/openhab_default.cfg configurations/openhab.cfg
   # unzip demo ?
   sudo chmod +x start.sh
+  popd
 }
 
 #
