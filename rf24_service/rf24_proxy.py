@@ -170,8 +170,12 @@ def parseCommand(buff):
 	else:
 		logging.debug("parsing text data");
 		out = ''.join(chr(i) for i in recv_buffer)
+		logging.debug("parsing text data: " + out);
 		arr = out.split("#")
-		return (arr[0], arr[1])
+		if len(arr) == 2:
+			return (arr[0], arr[1])
+		else:
+			return (None, None)
 
 #
 # Main
@@ -208,7 +212,10 @@ while True:
 	out = ''.join(chr(i) for i in recv_buffer)
 	topic, value = parseCommand(recv_buffer)
 	# put the topic fo the queue to be published to the MQTT
-	mq.put(topic, value)
-	logging.debug("Received frame: " + str(cntr) + " " + topic + ":" + value)
+	if (topic is not None):
+		mq.put(topic, value)
+		logging.debug("Received frame: " + str(cntr) + " " + topic + ":" + value)
+	else:
+		logging.error("Corrupted data received?")
 	cntr += 1
 # EOF
