@@ -39,10 +39,10 @@ parser.add_argument("-l", "--log", help="file to write log to")
 args = parser.parse_args()
 if args.log:
         LOG_FILENAME = args.log
-	logging.basicConfig(level=logging.DEBUG, filename=LOG_FILENAME, format='%(asctime)s:%(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S')
+	logging.basicConfig(level=logging.DEBUG, filename=LOG_FILENAME, format='%(asctime)s:%(levelname)s:%(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 else:
 	# log to console
-	logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S')
+	logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(levelname)s:%(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 
 #               TGT address                 OUR address
 pipes = [[0xf0, 0xf0, 0xf0, 0xf0, 0xe1], [0xf0, 0xf0, 0xf0, 0xf0, 0x00]]
