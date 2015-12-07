@@ -38,7 +38,7 @@ parser.add_argument("-l", "--log", help="file to write log to")
 # If the log file is specified on the command line then override the default
 args = parser.parse_args()
 if args.log:
-        LOG_FILENAME = args.log
+	LOG_FILENAME = args.log
 	logging.basicConfig(level=logging.DEBUG, filename=LOG_FILENAME, format='%(asctime)s:%(levelname)s:%(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 else:
 	# log to console
