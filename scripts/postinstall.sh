@@ -114,8 +114,8 @@ inst_openhab() {
   sudo rm -f distribution-1.7.1-runtime.zip
   cd addons/
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-addons.zip
-  sudo unzip distribution-1.7.1-addons.zip
-  sudo rm -f distribution-1.7.1-addons.zip
+  #sudo unzip distribution-1.7.1-addons.zip
+  #sudo rm -f distribution-1.7.1-addons.zip
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-demo.zip
   #sudo unzip distribution-1.7.1-demo.zip
   #sudo rm -f distribution-1.7.1-demo.zip
@@ -124,6 +124,25 @@ inst_openhab() {
   # unzip demo ?
   sudo chmod +x start.sh
   popd
+}
+
+inst_homegear() {
+  # hmland
+  sudo apt-get install apt-get install libusb-1.0-0-dev build-essential git
+  if [ ! -d /opt ]; then
+    sudo mkdir -p /opt
+  fi
+  pushd /opt
+  sudo git clone git://git.zerfleddert.de/hmcfgusb
+  cd hmcfgusb
+  sudo make
+  sudo cp hmcfgusb.rules /etc/udev/rules.d/
+  popd
+  # homegear
+  wget https://homegear.eu/packages/Release.key && apt-key add Release.key && rm Release.key
+  echo 'deb https://homegear.eu/packages/Raspbian/ jessie/' >>/etc/apt/sources.list.d/homegear.list
+  sudo apt-get update
+  sudo apt-get install homegear
 }
 
 #
@@ -138,6 +157,7 @@ inst_opt_packages
 
 inst_fix_gpio
 inst_nrf_example
+inst_homegear
 # not needed ?
 #inst_rf24
 #
