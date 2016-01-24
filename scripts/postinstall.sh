@@ -72,8 +72,9 @@ mosquitto-clients
 inst_fix_gpio() {
   echo "Install spi driver for python library"
   git clone https://github.com/Gadgetoid/py-spidev
-  cd py-spidev
+  pushd py-spidev
   sudo make install
+  popd
 }
 
 #
