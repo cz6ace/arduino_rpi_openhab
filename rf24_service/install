@@ -12,7 +12,8 @@ chmod +x /etc/init.d/${service_script}
 tgtdir=/usr/local/rf24_proxy/
 #https://github.com/cz6ace/arduino_rpi_openhab.git
 mkdir -p $tgtdir
-cp $app $tgt/
+#cp $app $tgt/
+ln -s $app $tgtdir/$app
 touch /etc/rf24_proxy.conf
 # enable init script
 update-rc.d rf24 defaults
