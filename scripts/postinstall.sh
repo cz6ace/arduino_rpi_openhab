@@ -135,11 +135,20 @@ inst_homegear() {
     sudo mkdir -p /opt
   fi
   pushd /opt
-  if [ ! -d hmcfgusb ]; then
+  if [ ! -d hm ]; then
+    mkdir hm
+    cd hm
     sudo git clone git://git.zerfleddert.de/hmcfgusb
     cd hmcfgusb
     sudo make
     sudo cp hmcfgusb.rules /etc/udev/rules.d/
+    # startup scripts 
+    cp debian/hmland.init /etc/init.d/hmland
+    chmod +x /etc/init.d/hmland
+    cp debian/hmland.default /etc/default/hmland
+    #TODO vim /etc/default/hmland
+    systemctl enable hmland
+    cd ..
   fi
   popd
   # homegear
