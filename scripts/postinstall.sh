@@ -39,6 +39,7 @@ bash-completion
 telnet
 vim
 htop
+apt-transport-https
 "
   sudo apt-get -y install $paks
 }
@@ -52,6 +53,7 @@ inst_dev_packages() {
 git
 python-smbus 
 i2c-tools
+python2.7-dev
 python-dev
 python-rpi.gpio
 mosquitto
@@ -128,21 +130,23 @@ inst_openhab() {
 
 inst_homegear() {
   # hmland
-  sudo apt-get install apt-get install libusb-1.0-0-dev build-essential git
+  sudo apt-get install -y libusb-1.0-0-dev build-essential git
   if [ ! -d /opt ]; then
     sudo mkdir -p /opt
   fi
   pushd /opt
-  sudo git clone git://git.zerfleddert.de/hmcfgusb
-  cd hmcfgusb
-  sudo make
-  sudo cp hmcfgusb.rules /etc/udev/rules.d/
+  if [ ! -d hmcfgusb ]; then
+    sudo git clone git://git.zerfleddert.de/hmcfgusb
+    cd hmcfgusb
+    sudo make
+    sudo cp hmcfgusb.rules /etc/udev/rules.d/
+  fi
   popd
   # homegear
-  wget https://homegear.eu/packages/Release.key && apt-key add Release.key && rm Release.key
-  echo 'deb https://homegear.eu/packages/Raspbian/ jessie/' >>/etc/apt/sources.list.d/homegear.list
+  wget https://homegear.eu/packages/Release.key && sudo apt-key add Release.key && rm Release.key
+  echo 'deb https://homegear.eu/packages/Raspbian/ jessie/' | sudo tee /etc/apt/sources.list.d/homegear.list
   sudo apt-get update
-  sudo apt-get install homegear
+  sudo apt-get install -y homegear
 }
 
 #
@@ -150,14 +154,17 @@ inst_homegear() {
 #
 echo Post-install
 #test_root
+install_all=0
+if [[ $install_all == 1 ]]; then
+fi
 remove_bloat
 system_update
 inst_dev_packages
 inst_opt_packages
-
 inst_fix_gpio
 inst_nrf_example
 inst_homegear
+#inst_openhab
 # not needed ?
 #inst_rf24
 #
@@ -167,5 +174,4 @@ inst_homegear
 #git push -u origin master
 #popd
 #
-#inst_openhab
 echo DONE.
