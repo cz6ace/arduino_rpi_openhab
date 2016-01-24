@@ -164,7 +164,7 @@ inst_opt_packages
 inst_fix_gpio
 inst_nrf_example
 inst_homegear
-#inst_openhab
+inst_openhab
 # not needed ?
 #inst_rf24
 #
