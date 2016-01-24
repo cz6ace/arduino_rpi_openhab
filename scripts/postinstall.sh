@@ -155,8 +155,8 @@ inst_homegear() {
 echo Post-install
 #test_root
 install_all=0
-if [[ $install_all == 1 ]]; then
-fi
+#if [[ $install_all == 1 ]]; then
+#fi
 remove_bloat
 system_update
 inst_dev_packages
