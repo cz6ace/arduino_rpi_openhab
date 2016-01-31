@@ -112,16 +112,18 @@ inst_openhab() {
   openhab=/opt/openhab
   sudo mkdir -p $openhab
   pushd $openhab
-  sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-runtime.zip
-  sudo unzip distribution-1.7.1-runtime.zip
-  sudo rm -f distribution-1.7.1-runtime.zip
+  oh_version=1.7.1
+  sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-${oh_version}-runtime.zip
+  sudo unzip distribution-${oh_version}-runtime.zip
+  sudo rm -f distribution-${oh_version}-runtime.zip
   cd addons/
-  sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-addons.zip
-  #sudo unzip distribution-1.7.1-addons.zip
-  #sudo rm -f distribution-1.7.1-addons.zip
-  sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-1.7.1-demo.zip
-  #sudo unzip distribution-1.7.1-demo.zip
-  #sudo rm -f distribution-1.7.1-demo.zip
+  sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-${oh_version}-addons.zip
+  unzip -l distribution-${oh_version}-addons.zip "*homematic*" "*gpio*" "*mqtt-*" "*pushover*" "*mail*" "*ntp*" "*mysql*" "*rrd4j*" "*mail*" "*wol*" "*exec*" "*logging*" "*http*"
+  #sudo unzip distribution-${oh_version}-addons.zip
+  sudo rm -f distribution-${oh_version}-addons.zip
+  sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-${oh_version}-demo.zip
+  #sudo unzip distribution-${oh_version}-demo.zip
+  #sudo rm -f distribution-${oh_version}-demo.zip
   cd ..
   sudo cp configurations/openhab_default.cfg configurations/openhab.cfg
   # unzip demo ?
@@ -163,18 +165,40 @@ inst_homegear() {
 # main
 #
 echo Post-install
+if [[ $# -eq 0 ]]; then
+  echo "Specify install type. Options are (only one at a time)"
+  echo "-all -bloat -update -dev -opt -gpio -nrf -homegear -openhab"
+  exit 1
+fi
 #test_root
 install_all=0
-#if [[ $install_all == 1 ]]; then
-#fi
-remove_bloat
-system_update
-inst_dev_packages
-inst_opt_packages
-inst_fix_gpio
-inst_nrf_example
-inst_homegear
-inst_openhab
+if [[ "$1" -eq "-all" ]]; then
+  install_all=1
+fi
+if [[ $install_all -eq 1 || "-bloat" -eq "$1" ]]; then
+  remove_bloat
+fi
+if [[ $install_all -eq 1 || "-update" -eq "$1" ]]; then
+  system_update
+fi
+if [[ $install_all -eq 1 || "-dev" -eq "$1" ]]; then
+  inst_dev_packages
+fi
+if [[ $install_all -eq 1 || "-opt" -eq "$1" ]]; then
+  inst_opt_packages
+fi
+if [[ $install_all -eq 1 || "-gpio" -eq "$1" ]]; then
+  inst_fix_gpio
+fi
+if [[ $install_all -eq 1 || "-nrf" -eq "$1" ]]; then
+  inst_nrf_example
+fi
+if [[ $install_all -eq 1 || "-homegear" -eq "$1" ]]; then
+  inst_homegear
+fi
+if [[ $install_all -eq 1 || "-openhab" -eq "$1" ]]; then
+  inst_openhab
+fi
 # not needed ?
 #inst_rf24
 #
