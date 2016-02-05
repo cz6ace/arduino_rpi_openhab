@@ -172,31 +172,31 @@ if [[ $# -eq 0 ]]; then
 fi
 #test_root
 install_all=0
-if [[ "$1" -eq "-all" ]]; then
+if [[ "$1" = "-all" ]]; then
   install_all=1
 fi
-if [[ $install_all -eq 1 || "-bloat" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-bloat" = "$1" ]]; then
   remove_bloat
 fi
-if [[ $install_all -eq 1 || "-update" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-update" = "$1" ]]; then
   system_update
 fi
-if [[ $install_all -eq 1 || "-dev" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-dev" = "$1" ]]; then
   inst_dev_packages
 fi
-if [[ $install_all -eq 1 || "-opt" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-opt" = "$1" ]]; then
   inst_opt_packages
 fi
-if [[ $install_all -eq 1 || "-gpio" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-gpio" = "$1" ]]; then
   inst_fix_gpio
 fi
-if [[ $install_all -eq 1 || "-nrf" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-nrf" = "$1" ]]; then
   inst_nrf_example
 fi
-if [[ $install_all -eq 1 || "-homegear" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-homegear" = "$1" ]]; then
   inst_homegear
 fi
-if [[ $install_all -eq 1 || "-openhab" -eq "$1" ]]; then
+if [[ $install_all == 1 || "-openhab" = "$1" ]]; then
   inst_openhab
 fi
 # not needed ?
