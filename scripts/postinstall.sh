@@ -112,7 +112,7 @@ inst_openhab() {
   openhab=/opt/openhab
   sudo mkdir -p $openhab
   pushd $openhab
-  oh_version=1.8.0
+  oh_version=1.8.1
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-${oh_version}-runtime.zip
   sudo unzip distribution-${oh_version}-runtime.zip
   sudo rm -f distribution-${oh_version}-runtime.zip
@@ -141,7 +141,8 @@ inst_homegear() {
   if [ ! -d hm ]; then
     mkdir hm
     cd hm
-    sudo git clone git://git.zerfleddert.de/hmcfgusb
+    #sudo git clone git://git.zerfleddert.de/hmcfgusb
+    sudo git clone https://github.com/cz6ace/hmcfgusb.git
     cd hmcfgusb
     sudo make
     sudo cp hmcfgusb.rules /etc/udev/rules.d/
