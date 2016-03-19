@@ -1,4 +1,5 @@
 /var/lib/homegear
+/etc/rc.local
 /etc/homegear
 /etc/init.d/hmland
 /etc/init.d/homegear
