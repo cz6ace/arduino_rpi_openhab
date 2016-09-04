@@ -159,7 +159,7 @@ inst_homegear() {
   wget https://homegear.eu/packages/Release.key && sudo apt-key add Release.key && rm Release.key
   echo 'deb https://homegear.eu/packages/Raspbian/ jessie/' | sudo tee /etc/apt/sources.list.d/homegear.list
   sudo apt-get update
-  sudo apt-get install -y homegear
+  sudo apt-get install -y homegear homegear-homematicbidcos
 }
 
 #
