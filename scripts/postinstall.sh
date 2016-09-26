@@ -118,7 +118,7 @@ inst_openhab() {
   sudo rm -f distribution-${oh_version}-runtime.zip
   cd addons/
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-${oh_version}-addons.zip
-  sudo unzip distribution-${oh_version}-addons.zip "*homematic*" "*gpio*" "*mqtt-*" "*pushover*" "*mail*" "*ntp*" "*mysql*" "*rrd4j*" "*mail*" "*wol*" "*exec*" "*logging*" "*http*"
+  sudo unzip distribution-${oh_version}-addons.zip "*homematic*" "*gpio*" "*mqtt-*" "*pushover*" "*mail*" "*ntp*" "*mysql*" "*rrd4j*" "*mail*" "*wol*" "*exec*" "*logging*" "*http*" "*weather*"
   #sudo unzip distribution-${oh_version}-addons.zip
   sudo rm -f distribution-${oh_version}-addons.zip
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-${oh_version}-demo.zip
