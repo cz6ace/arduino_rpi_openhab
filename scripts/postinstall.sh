@@ -109,10 +109,10 @@ sonic-pi
 }
 
 inst_openhab() {
-  openhab=/opt/openhab
+  openhab=${1:-/opt/openhab}
   sudo mkdir -p $openhab
   pushd $openhab
-  oh_version=1.8.1
+  oh_version=1.8.3
   sudo wget https://bintray.com/artifact/download/openhab/bin/distribution-${oh_version}-runtime.zip
   sudo unzip distribution-${oh_version}-runtime.zip
   sudo rm -f distribution-${oh_version}-runtime.zip
@@ -198,7 +198,7 @@ if [[ $install_all == 1 || "-homegear" = "$1" ]]; then
   inst_homegear
 fi
 if [[ $install_all == 1 || "-openhab" = "$1" ]]; then
-  inst_openhab
+  inst_openhab $2
 fi
 # not needed ?
 #inst_rf24
