@@ -99,6 +99,11 @@ inst_rf24() {
 remove_bloat() {
   echo "Remove bloatware"
   paks="
+dillo
+sense-emu-tools
+sense-hat
+penguinspuzzle
+poppler*
 minecraft-pi
 wolfram-*
 timidity
