@@ -99,6 +99,8 @@ inst_rf24() {
 remove_bloat() {
   echo "Remove bloatware"
   paks="
+realvnc-vnc-server
+realvnc-vnc-viewer
 dillo
 sense-emu-tools
 sense-hat
