@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# backup script of openhab/homegear
+#
+# can be installed like this (there cannot be a dot inside the cron scripta):
+# cd /etc/cron.weekly
+# ln -s /home/pi/arduino_rpi_openhab/scripts/backup.sh backup_rpi
+#
 notify() {
   if [ ! -z "$1" ]; then
     "$1" "$2"
