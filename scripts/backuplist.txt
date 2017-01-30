@@ -1,6 +1,7 @@
 /var/lib/homegear
 /etc/rc.local
 /etc/homegear
+/etc/mosquitto
 /etc/init.d/hmland
 /etc/init.d/homegear
 /etc/init.d/rf24
