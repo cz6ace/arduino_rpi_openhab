@@ -8,3 +8,4 @@
 /etc/rf24_proxy.conf
 /opt/hm
 /opt/openhab/configurations
+/opt/openhab/webapps

@@ -25,7 +25,7 @@ fi
 echo Backup to $DESTDIR, called from $workdir
 date=$(date +%F)
 tar -vczf ${DESTDIR}/backup-$date.tgz --files-from=${workdir}/backuplist.txt
-if [ $? ]; then
+if [ $? -eq 0 ]; then
   notify "$NOTIFY" "Backup $0 done"
 else
   notify "$NOTIFY" "Backup $0 failed"

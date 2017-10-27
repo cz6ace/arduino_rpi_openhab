@@ -35,7 +35,7 @@ TYPE_STRING=5
 LOG_FILENAME = ""
 parser = argparse.ArgumentParser(description="My simple Python service")
 parser.add_argument("-l", "--log", help="file to write log to")
-parser.add_argument("-v", "--verbose", help="Turns on verbose debug messaged (DEBUG). Normally ERROR level is used", default=logging.INFO, const=logging.DEBUG, dest="loglevel", action="store_const")
+parser.add_argument("-v", "--verbose", help="Turns on verbose debug messaged (DEBUG). Normally ERROR level is used", default=logging.ERROR, const=logging.DEBUG, dest="loglevel", action="store_const")
 # If the log file is specified on the command line then override the default
 args = parser.parse_args()
 if args.log:
