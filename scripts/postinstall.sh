@@ -138,6 +138,15 @@ inst_openhab() {
   popd
 }
 
+inst_openhab2() {
+  wget -qO - 'https://bintray.com/user/downloadSubjectPublicKey?username=openhab' | sudo apt-key add -
+  sudo apt-get install apt-transport-https
+  echo 'deb https://dl.bintray.com/openhab/apt-repo2 stable main' | sudo tee /etc/apt/sources.list.d/openhab2.list
+  sudo apt-get update
+  sudo apt-get install openhab2
+  sudo apt-get install openhab2-addons
+}
+
 inst_homegear() {
   # hmland
   sudo apt-get install -y libusb-1.0-0-dev build-essential git
@@ -175,7 +184,7 @@ inst_homegear() {
 echo Post-install
 if [[ $# -eq 0 ]]; then
   echo "Specify install type. Options are (only one at a time)"
-  echo "-all -bloat -update -dev -opt -gpio -nrf -homegear -openhab"
+  echo "-all -bloat -update -dev -opt -gpio -nrf -homegear -openhab -openhab2"
   exit 1
 fi
 #test_root
@@ -206,6 +215,9 @@ if [[ $install_all == 1 || "-homegear" = "$1" ]]; then
 fi
 if [[ $install_all == 1 || "-openhab" = "$1" ]]; then
   inst_openhab $2
+fi
+if [[ $install_all == 1 || "-openhab2" = "$1" ]]; then
+  inst_openhab2 $2
 fi
 # not needed ?
 #inst_rf24
