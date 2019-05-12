@@ -35,7 +35,7 @@ TYPE_STRING=5
 LOG_FILENAME = ""
 parser = argparse.ArgumentParser(description="My simple Python service")
 parser.add_argument("-l", "--log", help="file to write log to")
-parser.add_argument("-v", "--verbose", help="Turns on verbose debug messaged (DEBUG). Normally ERROR level is used", default=logging.ERROR, const=logging.DEBUG, dest="loglevel", action="store_const")
+parser.add_argument("-v", "--verbose", help="Turns on verbose debug messaged (DEBUG). Normally ERROR level is used", default=logging.CRITICAL, const=logging.DEBUG, dest="loglevel", action="store_const")
 # If the log file is specified on the command line then override the default
 args = parser.parse_args()
 if args.log:
@@ -54,8 +54,8 @@ radio.setRetries(15,15)
 radio.setPayloadSize(32)
 radio.setChannel(0x40)
 radio.setDataRate(NRF24.BR_250KBPS)
-# PA_MAX
-radio.setPALevel(NRF24.PA_LOW)
+# PA_MAX/PA_LOW
+radio.setPALevel(NRF24.PA_MAX)
 radio.setAutoAck(1)
 radio.openWritingPipe(pipes[0])
 radio.openReadingPipe(1, pipes[1])
