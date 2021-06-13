@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # raspberry pi nrf24l01 hub
 # more details at http://blog.riyas.org
 # Credits to python port of nrf24l01, Joao Paulo Barrac & maniacbugs original c library
@@ -9,7 +9,7 @@ from time import gmtime, strftime
 
 import paho.mqtt.client as mqtt
 import threading
-import Queue
+import queue
 from time import sleep
 import logging
 import os, struct, anyconfig
@@ -49,24 +49,42 @@ else:
 pipes = [[0xf0, 0xf0, 0xf0, 0xf0, 0xe1], [0xf0, 0xf0, 0xf0, 0xf0, 0x00]]
 
 radio = NRF24()
-radio.begin(0, 0,25,18) #set gpio 25 as CE pin
+#radio.begin(0, 0,25) #set gpio 25 as CE pin
+radio.begin(0, 0,25,0) #set gpio 25 as CE pin
 radio.setRetries(15,15)
 radio.setPayloadSize(32)
 radio.setChannel(0x40)
 radio.setDataRate(NRF24.BR_250KBPS)
 # PA_MAX/PA_LOW
-radio.setPALevel(NRF24.PA_MAX)
+radio.setPALevel(NRF24.PA_HIGH)
 radio.setAutoAck(1)
 radio.openWritingPipe(pipes[0])
 radio.openReadingPipe(1, pipes[1])
+radio.powerUp()
 
 radio.startListening()
 radio.stopListening()
 
+
+# test code
+
+#outPipe = pipes[0]
+#outPipe[4] = 2
+#radio.openWritingPipe(outPipe)
+#ok = radio.write([3])
+#if not ok:
+        ##logging.error("Transmit (write) command failed, no ack received." + radio.last_error)
+        #logging.error("Transmit (write) command failed, no ack received.")
+        #radio.printDetails()
+        #exit(0)
+#else:
+        #logging.error("Transmit OK")
+        #exit(0)
+
 radio.printDetails()
 radio.startListening()
 
-cmdQ = Queue.Queue()
+cmdQ = queue.Queue()
 conf_file = "rf24_proxy.conf"
 if not os.path.isfile(conf_file):
 	conf_file = "/etc/" + conf_file
@@ -78,7 +96,7 @@ class MQ(threading.Thread):
 	Class for communicating with MQTT. Publishing and also subscribing to particular topics
 	"""
 	client = mqtt.Client()
-	queue = Queue.Queue()
+	queue = queue.Queue()
 	on_message_callback = None
 
 	def __init__(self):
@@ -190,13 +208,14 @@ mq.set_on_message(on_mq_message)
 cntr = 0
 while True:
 	pipe = [0]
-	while not radio.available(pipe, True):
+	while not radio.available(pipe, False):
 		# when no data available, process commands queue
 		if not cmdQ.empty():
 			addr, bindata, value = cmdQ.get()
-			payload = ''.join(chr(i) for i in bindata)
-			payload = payload + value
-			logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + value + ", payload=" + payload)
+			#payload = ''.join(chr(i) for i in bindata)
+			payload = list(bindata)
+			payload.append(int(chr(value[0])))
+			logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + chr(value[0]) + ", payload=" + ' '.join(map(str, payload)))
 			# open writing pipe for proper node address
 			outPipe = pipes[0]
 			outPipe[4] = addr
