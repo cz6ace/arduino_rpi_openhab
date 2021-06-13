@@ -3,17 +3,17 @@
 # more details at http://blog.riyas.org
 # Credits to python port of nrf24l01, Joao Paulo Barrac & maniacbugs original c library
 
-from nrf24 import NRF24
 import time
-from time import gmtime, strftime
+from time import gmtime, strftime, sleep
 
 import paho.mqtt.client as mqtt
 import threading
 import queue
-from time import sleep
 import logging
 import os, struct, anyconfig
 import argparse
+
+from nrf24_serial import Proxy
 
 #constants
 MODE_BINARY = 1
@@ -35,6 +35,7 @@ TYPE_STRING=5
 LOG_FILENAME = ""
 parser = argparse.ArgumentParser(description="My simple Python service")
 parser.add_argument("-l", "--log", help="file to write log to")
+parser.add_argument("-s", "--serial", help="serial port with NRF24", default="/dev/ttyUSB1")
 parser.add_argument("-v", "--verbose", help="Turns on verbose debug messaged (DEBUG). Normally ERROR level is used", default=logging.CRITICAL, const=logging.DEBUG, dest="loglevel", action="store_const")
 # If the log file is specified on the command line then override the default
 args = parser.parse_args()
@@ -45,44 +46,7 @@ else:
 	# log to console
 	logging.basicConfig(level=args.loglevel, format='%(asctime)s:%(levelname)s:%(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 
-#               TGT address                 OUR address
-pipes = [[0xf0, 0xf0, 0xf0, 0xf0, 0xe1], [0xf0, 0xf0, 0xf0, 0xf0, 0x00]]
-
-radio = NRF24()
-#radio.begin(0, 0,25) #set gpio 25 as CE pin
-radio.begin(0, 0,25,0) #set gpio 25 as CE pin
-radio.setRetries(15,15)
-radio.setPayloadSize(32)
-radio.setChannel(0x40)
-radio.setDataRate(NRF24.BR_250KBPS)
-# PA_MAX/PA_LOW
-radio.setPALevel(NRF24.PA_HIGH)
-radio.setAutoAck(1)
-radio.openWritingPipe(pipes[0])
-radio.openReadingPipe(1, pipes[1])
-radio.powerUp()
-
-radio.startListening()
-radio.stopListening()
-
-
-# test code
-
-#outPipe = pipes[0]
-#outPipe[4] = 2
-#radio.openWritingPipe(outPipe)
-#ok = radio.write([3])
-#if not ok:
-        ##logging.error("Transmit (write) command failed, no ack received." + radio.last_error)
-        #logging.error("Transmit (write) command failed, no ack received.")
-        #radio.printDetails()
-        #exit(0)
-#else:
-        #logging.error("Transmit OK")
-        #exit(0)
-
-radio.printDetails()
-radio.startListening()
+proxy = Proxy(args.serial)
 
 cmdQ = queue.Queue()
 conf_file = "rf24_proxy.conf"
@@ -176,13 +140,13 @@ def parseCommand(buff):
 		strdata = ''.join(chr(i) for i in data)
 		logging.debug("sender=" + str(cid) + ", command=" + str(command) + ", dtype=" + str(dtype) + ", len=" + str(size));
 		if dtype == TYPE_BYTE:
-			return (get_topic(command, cid), str(struct.unpack('B', strdata)[0]))
+			return (get_topic(command, cid), str(struct.unpack('B', data)[0]))
 		elif dtype == TYPE_BOOL:
-			return (get_topic(command, cid), str(struct.unpack('?', strdata)[0]))
+			return (get_topic(command, cid), str(struct.unpack('?', data)[0]))
 		elif dtype == TYPE_INT:
-			return (get_topic(command, cid), str(struct.unpack('i', strdata)[0]))
+			return (get_topic(command, cid), str(struct.unpack('i', data)[0]))
 		elif dtype == TYPE_FLOAT:
-			return (get_topic(command, cid), str(struct.unpack('f', strdata)[0]))
+			return (get_topic(command, cid), str(struct.unpack('f', data)[0]))
 		elif dtype == TYPE_STRING:
 			return (get_topic(command, cid), strdata)
 		else:
@@ -208,7 +172,7 @@ mq.set_on_message(on_mq_message)
 cntr = 0
 while True:
 	pipe = [0]
-	while not radio.available(pipe, False):
+	while not proxy.available():
 		# when no data available, process commands queue
 		if not cmdQ.empty():
 			addr, bindata, value = cmdQ.get()
@@ -216,27 +180,22 @@ while True:
 			payload = list(bindata)
 			payload.append(int(chr(value[0])))
 			logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + chr(value[0]) + ", payload=" + ' '.join(map(str, payload)))
-			# open writing pipe for proper node address
-			outPipe = pipes[0]
-			outPipe[4] = addr
-			radio.stopListening();
-			radio.openWritingPipe(outPipe)
-			ok = radio.write(payload)
-			radio.startListening()
-			if not ok:
-				logging.error("Transmit (write) command failed, no ack received.")
+			proxy.write(addr, payload)
+			#logging.error("Transmit (write) command failed, no ack received.")
 
 		#
-		time.sleep(2.0/1000.0)
-	recv_buffer = []
-	radio.read(recv_buffer)
-	out = ''.join(chr(i) for i in recv_buffer)
-	topic, value = parseCommand(recv_buffer)
-	# put the topic fo the queue to be published to the MQTT
-	if (topic is not None):
-		mq.put(topic, value)
-		logging.debug("Received frame: " + str(cntr) + " " + topic + ":" + value)
+		time.sleep(4.0/1000.0)
+	recv_buffer = proxy.read()
+	if recv_buffer is not None:
+		out = ''.join(chr(i) for i in recv_buffer)
+		topic, value = parseCommand(recv_buffer)
+		# put the topic fo the queue to be published to the MQTT
+		if (topic is not None):
+		    mq.put(topic, value)
+		    logging.debug("Received frame: " + str(cntr) + " " + topic + ":" + value)
+		else:
+		    logging.error("Corrupted data received?")
+		cntr += 1
 	else:
-		logging.error("Corrupted data received?")
-	cntr += 1
+		time.sleep(4.0/1000.0)
 # EOF
