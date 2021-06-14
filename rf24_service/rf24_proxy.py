@@ -178,8 +178,9 @@ while True:
 			addr, bindata, value = cmdQ.get()
 			#payload = ''.join(chr(i) for i in bindata)
 			payload = list(bindata)
-			payload.append(int(chr(value[0])))
-			logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + chr(value[0]) + ", payload=" + ' '.join(map(str, payload)))
+			if len(value) > 0:
+				payload.append(int(chr(value[0])))
+			logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + str(value) + ", payload=" + ' '.join(map(str, payload)))
 			proxy.write(addr, payload)
 			#logging.error("Transmit (write) command failed, no ack received.")
 
