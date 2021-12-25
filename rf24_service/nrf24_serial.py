@@ -20,7 +20,7 @@ import serial
 
 class Proxy:
     def __init__(self, port, verbose=False):
-        self.serial = serial.Serial(port)
+        self.serial = serial.Serial(port, timeout=0.02)  # up to 20 characters per 9600
         self.verbose = verbose
 
     def write(self, addr, data):
@@ -39,7 +39,12 @@ class Proxy:
         return self.serial.in_waiting
 
     def read(self):
-        preambule = self.serial.read()[0]
+        buff = self.serial.read()
+        if not buff:
+          if self.verbose:
+              print("no data received")
+          return None
+        preambule = buff[0]
         if preambule != ord(">"):
             print("wrong character: " + chr(preambule))
             return None

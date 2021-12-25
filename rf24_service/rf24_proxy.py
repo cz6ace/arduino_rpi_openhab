@@ -172,20 +172,17 @@ mq.set_on_message(on_mq_message)
 cntr = 0
 while True:
 	pipe = [0]
-	while not proxy.available():
-		# when no data available, process commands queue
-		if not cmdQ.empty():
-			addr, bindata, value = cmdQ.get()
-			#payload = ''.join(chr(i) for i in bindata)
-			payload = list(bindata)
-			if len(value) > 0:
-				payload.append(int(chr(value[0])))
-			logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + str(value) + ", payload=" + ' '.join(map(str, payload)))
-			proxy.write(addr, payload)
-			#logging.error("Transmit (write) command failed, no ack received.")
+	# when no data available, process commands queue
+	while not proxy.available() and not cmdQ.empty():
+		addr, bindata, value = cmdQ.get()
+		#payload = ''.join(chr(i) for i in bindata)
+		payload = list(bindata)
+		if len(value) > 0:
+			payload.append(int(chr(value[0])))
+		logging.info("Transmit: addr=" + str(addr) +", bindata=" + str(bindata) + ", value=" + str(value) + ", payload=" + ' '.join(map(str, payload)))
+		proxy.write(addr, payload)
+		#logging.error("Transmit (write) command failed, no ack received.")
 
-		#
-		time.sleep(4.0/1000.0)
 	recv_buffer = proxy.read()
 	if recv_buffer is not None:
 		out = ''.join(chr(i) for i in recv_buffer)
@@ -197,6 +194,4 @@ while True:
 		else:
 		    logging.error("Corrupted data received?")
 		cntr += 1
-	else:
-		time.sleep(4.0/1000.0)
 # EOF
