@@ -9,6 +9,6 @@
 /opt/hm
 /opt/openhab/configurations
 /opt/openhab/webapps
-/etc/openhab2
-/var/lib/openhab2/etc
-/var/lib/openhab2/webapps
+/etc/openhab
+/var/lib/openhab/etc
+/var/lib/openhab/webapps
