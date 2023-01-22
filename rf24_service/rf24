@@ -4,7 +4,7 @@ if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
     set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
 fi
 ### BEGIN INIT INFO
-# Provides:          RF24 proxy between Arduino and Mosquitto
+# Provides:          rf24
 # Required-Start:    $local_fs $network mosquitto
 # Required-Stop:     $local_fs
 # Default-Start:     2 3 4 5

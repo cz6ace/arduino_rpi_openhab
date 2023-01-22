@@ -1,0 +1,14 @@
+# Service RF24 proxy between Arduino and Mosquitto
+
+[Unit]
+Description=RF24 proxy between Arduino and Mosquitto
+After=network-online.target
+After=mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=on-failure
+#RestartSec=5
+User=root
+ExecStart=/usr/local/rf24_proxy/rf24_proxy.py --log /var/log/rf24.log

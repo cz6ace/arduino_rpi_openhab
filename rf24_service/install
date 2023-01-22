@@ -6,8 +6,10 @@ if [[ $EUID -ne 0 ]]; then
   exit 2
 fi
 
-cp $service_script /etc/init.d/
-chmod +x /etc/init.d/${service_script}
+# SysV init disabled
+#cp $service_script /etc/init.d/
+#chmod +x /etc/init.d/${service_script}
+cp ${service_script}.service /etc/systemd/system/
 
 # devices and commands configurations
 if [ -f rf24_proxy.conf ]; then
@@ -21,5 +23,6 @@ mkdir -p $tgtdir
 ln -s ${PWD}${app} ${tgtdir}/${app}
 touch /etc/rf24_proxy.conf
 # enable init script
-update-rc.d rf24 defaults
+# SysV init disabled
+#update-rc.d rf24 defaults
 echo done.
