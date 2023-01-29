@@ -4,8 +4,9 @@
 /etc/mosquitto
 /etc/init.d/hmland
 /etc/init.d/homegear
-/etc/init.d/rf24
 /etc/rf24_proxy.conf
+/etc/systemd/system/gw.service
+/etc/systemd/system/rf24.service
 /opt/hm
 /opt/openhab/configurations
 /opt/openhab/webapps
