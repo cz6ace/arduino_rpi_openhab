@@ -12,3 +12,6 @@ Restart=on-failure
 #RestartSec=5
 User=root
 ExecStart=/usr/local/rf24_proxy/rf24_proxy.py --log /var/log/rf24.log
+
+[Install]
+WantedBy=default.target
